@@ -1,4 +1,6 @@
 /.idea
-/*build*
+/out/build/*
 /deps
 /.pkg.mutex
+/osm-data
+/gcc12-toolchain.cmake
