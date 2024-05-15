@@ -4,11 +4,14 @@
 
 namespace osr {
 
+// dürfen wir davon ausgehen, dass Autofahrer != Rollstuhlfahrer sind?
 template <bool IsWheelchair>
 
 // kUturnPenalty needs to be added to the foot struct
-struct foot {
-  static constexpr auto const kMaxMatchDistance = 100U;
+// rename to parking struct
+struct parking {
+  static constexpr auto const kUturnPenalty = cost_t{120U};
+  static constexpr auto const kMaxMatchDistance = 200U;
   static constexpr auto const kOffroadPenalty = 3U;
 
   struct node {
@@ -36,15 +39,24 @@ struct foot {
     // direction dir_;
   };
 
+  // there are different keys used in foot and car
   using key = node;
 
+  // what exactly is an entry?
   struct entry {
+    // kMaxWays is missing
+    // kN is missing
+
     constexpr std::optional<node> pred(node) const noexcept {
+      // car uses an index to get the pred, foot uses the node directly
       return pred_ == node_idx_t::invalid()
                  ? std::nullopt
-                 : std::optional{node{pred_, pred_lvl_}};
+                 : std::optional{node{pred_, pred_lvl_}}; // pred_way_ and pred_dir_ are missing
     }
+    // cost saved in node vs cost saved in entry
     constexpr cost_t cost(node) const noexcept { return cost_; }
+
+    // car uses an index to get the cost and pred_way_ and pred_dir_ additionally
     constexpr bool update(node, cost_t const c, node const pred) noexcept {
       if (c < cost_) {
         cost_ = c;
@@ -55,11 +67,20 @@ struct foot {
       return false;
     }
 
+    // get_node() is missing
+
+    // get_index() is missing
+
+    // to_dir() is missing
+
+    // to_bool() is missing
+
+    // node_idk_t not in form of array, array way_pos_t is missing, bitset kn missing, array cost_t is missing
     node_idx_t pred_{node_idx_t::invalid()};
     level_t pred_lvl_;
     cost_t cost_{kInfeasible};
   };
-
+  // way_ and dir_ are missing
   struct label {
     label(node const n, cost_t const c) : n_{n.n_}, lvl_{n.lvl_}, cost_{c} {}
 
@@ -77,7 +98,7 @@ struct foot {
       using namespace ankerl::unordered_dense::detail;
       return wyhash::mix(
           wyhash::hash(static_cast<std::uint64_t>(to_idx(n.lvl_))),
-          wyhash::hash(static_cast<std::uint64_t>(to_idx(n.n_))));
+          wyhash::hash(static_cast<std::uint64_t>(to_idx(n.n_))));  // car only needs to_idx(n) insted of to_idx(n.lvl_) and to_idx(n.n_)
     }
   };
 
@@ -95,6 +116,7 @@ struct foot {
     }
   }
 
+// i dont get what is happening here
   template <typename Fn>
   static void resolve_all(ways const& w,
                           node_idx_t const n,
@@ -137,6 +159,7 @@ struct foot {
           return;
         }
 
+        // changes happen here:
         if (can_use_elevator(w, target_node, n.lvl_)) {
           for_each_elevator_level(
               w, target_node, [&](level_t const target_lvl) {
@@ -167,6 +190,7 @@ struct foot {
     }
   }
 
+  // probably parking spots need to be added here to change the routing
   static bool is_reachable(ways const& w,
                            node const n,
                            way_idx_t const way,
@@ -217,6 +241,7 @@ struct foot {
     }
   }
 
+  // needed???
   static bool can_use_elevator(ways const& w,
                                way_idx_t const way,
                                level_t const a,
@@ -239,6 +264,7 @@ struct foot {
     }
   }
 
+  // why are there to bools with same name?
   static bool can_use_elevator(ways const& w,
                                node_idx_t const n,
                                level_t const a,
@@ -268,6 +294,7 @@ struct foot {
     return it->second;
   }
 
+  // different costs for car and foot, what happens by changing to foot after car?
   static constexpr cost_t way_cost(way_properties const e,
                                    direction,
                                    std::uint16_t const dist) {
@@ -278,6 +305,7 @@ struct foot {
     }
   }
 
+  // combine with car node_cost
   static constexpr cost_t node_cost(node_properties const n) {
     return n.is_walk_accessible() ? (n.is_elevator() ? 90U : 0U) : kInfeasible;
   }

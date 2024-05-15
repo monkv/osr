@@ -431,3 +431,4 @@ ui/web/js/deps/leaflet.js
 ui/web/js/deps/Leaflet.PolylineMeasure.js
 CMakePresets.json
 CMakePresets.json
+.vscode/settings.json
