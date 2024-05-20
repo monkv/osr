@@ -107,7 +107,8 @@ struct parking {
                       way_idx_t const way,
                       node_idx_t const n,
                       level_t const lvl,
-                      Fn&& f) {
+                      Fn&& f) {     // what is Fn&&????
+                      
     auto const p = w.way_properties_[way];
     if (lvl == level_t::invalid() ||
         (p.from_level() == lvl || p.to_level() == lvl ||
