@@ -33,7 +33,7 @@ struct parking {
                  << ", level=" << to_float(lvl_) << ")";
     }
 
-    node_idx_t n_;
+    node_idx_t n_; //what does this t stand for?
     level_t lvl_;
     // way_pos_t way_;
     // direction dir_;
@@ -101,7 +101,7 @@ struct parking {
           wyhash::hash(static_cast<std::uint64_t>(to_idx(n.n_))));  // car only needs to_idx(n) insted of to_idx(n.lvl_) and to_idx(n.n_)
     }
   };
-
+  //going up the level?
   template <typename Fn>
   static void resolve(ways const& w,
                       way_idx_t const way,
@@ -116,7 +116,7 @@ struct parking {
     }
   }
 
-// i dont get what is happening here
+// i don't get what is happening here
   template <typename Fn>
   static void resolve_all(ways const& w,
                           node_idx_t const n,
@@ -264,7 +264,7 @@ struct parking {
     }
   }
 
-  // why are there to bools with same name?
+  // why are there two bools with same name?
   static bool can_use_elevator(ways const& w,
                                node_idx_t const n,
                                level_t const a,
